@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "todo-python-litestar-api"
+version = "0.1.0"
+description = "Simple Todo API"
+authors = ["정승룡 <bing9013@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+litestar = {extras = ["full"], version = "^2.1.1"}
+sqlalchemy = "^2.0.21"
+pydantic = "^2.3.0"
+alembic = "^1.12.0"
+psycopg = {extras = ["binary"], version = "^3.1.12"}
+greenlet = "^2.0.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
