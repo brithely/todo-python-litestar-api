@@ -1,7 +1,7 @@
 import abc
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import delete, insert, select, update
 
 from todos.adapters import orm
 
@@ -14,33 +14,32 @@ class TodoRepository(AbstractRepository):
     def __init__(self, session):
         self.session = session
 
-    async def get(self, todo_id):
+    async def get(self, todo_id: int) -> orm.Todo:
         query = select(orm.Todo).where(orm.Todo.id == todo_id)
         result = await self.session.execute(query)
-        return result
+        return result.scalars().first()
 
-    async def get_list(self):
+    async def get_list(self) -> list[orm.Todo]:
         query = select(orm.Todo)
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    def create(self, data):
-        query = orm.Todo(
-            content=data.content,
-            is_completed=False,
-            order=data.order,
-            created_at=datetime.now(),
-            updated_at=datetime.now(),
-        )
-        self.session.add(query)
-        self.session.commit()
-        return query
+    async def create(self, data: dict) -> orm.Todo:
+        query = insert(orm.Todo).values(**data).returning(orm.Todo)
+        result = await self.session.execute(query)
+        return result.scalars().first()
 
-    def update(self, todo_id, data):
-        query = self.session.query(orm.Todo).filter(orm.Todo.id == todo_id).first()
-        query.content = data.content
-        query.is_completed = data.is_completed
-        query.order = data.order
-        query.updated_at = datetime.now()
-        self.session.commit()
-        return query
+    async def update(self, todo_id: int, data: dict) -> orm.Todo:
+        query = (
+            update(orm.Todo)
+            .where(orm.Todo.id == todo_id)
+            .values(**data)
+            .returning(orm.Todo)
+        )
+        result = await self.session.execute(query)
+        return result.scalars().first()
+
+    async def delete(self, todo_id: int) -> bool:
+        query = delete(orm.Todo).where(orm.Todo.id == todo_id)
+        result = await self.session.execute(query)
+        return result.rowcount == 1

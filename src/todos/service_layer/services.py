@@ -1,18 +1,38 @@
+from datetime import datetime
+
 from todos.adapters.repositories import TodoRepository
+from todos.domain.schemas import CreateTodo, Todo, UpdateTodo
 
 
 class TodoService:
     def __init__(self, repo=TodoRepository):
         self.repo = repo
 
-    def get(self, todo_id):
-        return self.repo.get(todo_id)
+    async def get(self, todo_id: int) -> Todo:
+        return Todo.model_validate(await self.repo.get(todo_id))
 
-    def get_list(self):
-        return self.repo.get_list()
+    async def get_list(self) -> list[Todo]:
+        todo_list = [Todo.model_validate(todo) for todo in await self.repo.get_list()]
+        return todo_list
 
-    def create(self, data):
-        return self.repo.create(data)
+    async def create(self, data: CreateTodo) -> Todo:
+        create_data = {
+            "content": data.content,
+            "is_completed": False,
+            "order": data.order,
+            "created_at": datetime.now(),
+            "updated_at": datetime.now(),
+        }
+        return Todo.model_validate(await self.repo.create(create_data))
 
-    def update(self, todo_id, data):
-        return self.repo.update(todo_id, data)
+    async def update(self, todo_id: int, data: UpdateTodo) -> Todo:
+        update_data = {
+            "content": data.content,
+            "is_completed": data.is_completed,
+            "order": data.order,
+            "updated_at": datetime.now(),
+        }
+        return Todo.model_validate(await self.repo.update(todo_id, update_data))
+
+    async def delete(self, todo_id: int) -> bool:
+        return await self.repo.delete(todo_id)

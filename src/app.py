@@ -7,6 +7,7 @@ todo_route = Router(path="/todo", route_handlers=[TodoController])
 
 
 app = Litestar(
+    debug=True,
     route_handlers=[todo_route],
     dependencies={"transaction": provide_transaction},
     lifespan=[db_connection],
