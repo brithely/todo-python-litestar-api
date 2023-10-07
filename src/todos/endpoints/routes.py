@@ -2,8 +2,6 @@ from datetime import datetime
 
 from litestar import Controller, delete, get, post, put
 from litestar.exceptions import NotFoundException
-from sqlalchemy import delete as sql_delete
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from todos.adapters import orm

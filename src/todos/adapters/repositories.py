@@ -15,7 +15,7 @@ class TodoRepository(AbstractRepository):
         self.session = session
 
     async def get(self, todo_id: int) -> orm.Todo:
-        query = select(orm.Todo).where(orm.Todo.id == todo_id)
+        query = select(orm.Todo).where(orm.Todo.id == todo_id).limit(1)
         result = await self.session.execute(query)
         return result.scalars().first()
 

@@ -7,7 +7,7 @@ from litestar.datastructures import State
 from litestar.exceptions import ClientException
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 
 def get_postgres_uri():
@@ -30,6 +30,10 @@ async def db_connection(app: Litestar) -> AsyncGenerator[None, None]:
         yield
     finally:
         await engine.dispose()
+
+
+
+ModelBase = declarative_base()
 
 
 sessionmaker = async_sessionmaker(expire_on_commit=False)
