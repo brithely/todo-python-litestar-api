@@ -15,5 +15,4 @@ class UserController(Controller):
 
     @post("signup")
     async def signup(self, transaction: AsyncSession, data: UserSignup) -> User:
-        
         return await UserService(UserRepo(transaction)).signup(data)

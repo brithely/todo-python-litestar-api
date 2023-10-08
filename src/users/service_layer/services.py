@@ -42,4 +42,4 @@ class UserService:
                 }
             )
         )
-        return self.login(user.email, data.password)
+        return await self.login(user.email, data.password)
